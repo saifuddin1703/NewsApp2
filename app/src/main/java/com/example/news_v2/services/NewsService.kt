@@ -1,22 +1,24 @@
 package com.example.news_v2.services
 
 import com.example.news_v2.retrofit.response.NewsResponse
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface NewsService {
 
-    @GET("/everything")
-    suspend fun getEverything() : Call<NewsResponse>
+    @GET("/v2/everything")
+    suspend fun getEverything() : Response<NewsResponse>
 
-    @GET("/top-headlines")
-    suspend fun getTopHeadlines() : Call<NewsResponse>
+    @GET("/v2/top-headlines")
+    suspend fun getTopHeadlines() : Response<NewsResponse>
 
-    @GET("/everything")
-    suspend fun searchNews(@Query("q") searchQuery : String) : Call<NewsResponse>
+    @GET("/v2/everything")
+    suspend fun searchNews(@Query("q") searchQuery : String) : Response<NewsResponse>
 
-    @GET("/everything")
-    suspend fun getNewsOfCategory(@Query("category") category : String) : Call<NewsResponse>
+//    @GET("/v2/everything")
+//    suspend fun getNewsOfCategory(@Query("category") category : String) : Response<NewsResponse>
 
 }
