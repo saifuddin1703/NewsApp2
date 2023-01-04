@@ -19,29 +19,28 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-
         setContentView(binding.root)
 
-        homeViewModel.getTopHeadlines().observe(this){result ->
-            when (result.status){
-
-                Status.LOADING ->{
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.message.visibility = View.GONE
-                }
-
-                Status.SUCCESS ->{
-                    binding.progressBar.visibility = View.GONE
-                    binding.message.visibility = View.VISIBLE
-                    binding.message.text = "Api called"
-                }
-
-                Status.ERROR -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.message.visibility = View.VISIBLE
-                    binding.message.text = "Api calling fail"
-                }
-            }
-        }
+//        homeViewModel.getTopHeadlines().observe(this){result ->
+//            when (result.status){
+//
+//                Status.LOADING ->{
+//                    binding.progressBar.visibility = View.VISIBLE
+//                    binding.message.visibility = View.GONE
+//                }
+//
+//                Status.SUCCESS ->{
+//                    binding.progressBar.visibility = View.GONE
+//                    binding.message.visibility = View.VISIBLE
+//                    binding.message.text = "Api called"
+//                }
+//
+//                Status.ERROR -> {
+//                    binding.progressBar.visibility = View.GONE
+//                    binding.message.visibility = View.VISIBLE
+//                    binding.message.text = "Api calling fail"
+//                }
+//            }
+//        }
     }
 }

@@ -18,7 +18,6 @@ interface NewsService {
     @GET("/v2/everything")
     suspend fun searchNews(@Query("q") searchQuery : String) : Response<NewsResponse>
 
-//    @GET("/v2/everything")
-//    suspend fun getNewsOfCategory(@Query("category") category : String) : Response<NewsResponse>
-
+    @GET("/v2/top-headlines")
+    suspend fun getHeadlinesOfCategory(@Query("category") category : String) : NewsResponse
 }

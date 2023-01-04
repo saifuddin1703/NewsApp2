@@ -19,5 +19,5 @@ class NewsRepository(
 
     suspend fun searchNews(searchQuery : String) = newsService.searchNews(searchQuery = searchQuery)
 
-//    suspend fun getNewsOfCategory(category : String) = newsService.getNewsOfCategory(category = category)
+    suspend fun getTopHeadlinesOfCategory(category : String) = newsService.getHeadlinesOfCategory(category = category)
 }
