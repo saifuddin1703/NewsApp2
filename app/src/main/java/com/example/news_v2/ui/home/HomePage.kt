@@ -24,6 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.example.news_v2.data.models.Article
 import com.example.news_v2.ui.CircularProgressBar
@@ -44,13 +47,13 @@ fun HomePage(homeViewModel: HomeViewModel = viewModel()){
         mutableStateOf("Business")
     }
 
-    val topHeadlinesResult by homeViewModel.topHeadlinesOfCategoryResult.observeAsState()
-
-    Log.d(TAG,"$selectedCategory ${topHeadlinesResult?.status.toString()}")
-    LaunchedEffect(key1 = selectedCategory){
-        Log.d(TAG,"Launched effect")
-        homeViewModel.fetchHeadlinesOfCategory(selectedCategory)
-    }
+    val headlinesData = homeViewModel.fetchHeadlinesOfCategory(selectedCategory).collectAsLazyPagingItems()
+//
+//    Log.d(TAG,"$selectedCategory ${topHeadlinesResult?.status.toString()}")
+//    LaunchedEffect(key1 = selectedCategory){
+//        Log.d(TAG,"Launched effect")
+//        homeViewModel.fetchHeadlinesOfCategory(selectedCategory)
+//    }
 
     Column(modifier = Modifier
         .background(color = Color.White))
@@ -77,33 +80,55 @@ fun HomePage(homeViewModel: HomeViewModel = viewModel()){
         })
 
 
-        when (topHeadlinesResult?.status){
-            Status.SUCCESS ->{
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(top = 15.dp)
-                ) {
-                    topHeadlinesResult?.data?.let { articles->
-                        items(articles){article->
-                            ArticleView(article = article)
-                        }
+//        when (topHeadlinesResult?.status){
+//            Status.SUCCESS ->{
+//                LazyColumn(
+//                    modifier = Modifier
+//                        .padding(top = 15.dp)
+//                ) {
+//                    topHeadlinesResult?.data?.let { articles->
+//                        items(articles){article->
+//                            ArticleView(article = article)
+//                        }
+//                    }
+//                }
+//            }
+//            Status.ERROR ->{
+//                Spacer(modifier = Modifier.fillMaxHeight(0.4f))
+//                Text(text = "Failed to load Headlines"
+//                    ,modifier = Modifier.align(alignment = CenterHorizontally))
+//            }
+//            Status.LOADING ->{
+//                Spacer(modifier = Modifier.fillMaxHeight(0.4f))
+//                CircularProgressBar(modifier = Modifier
+//                    .size(30.dp)
+//                    .align(alignment = CenterHorizontally))
+//            }
+//            else -> {}
+//        }
+        LazyColumn(){
+            items(headlinesData) { article ->
+                article?.let {
+                    ArticleView(article = it)
+                }
+            }
+            when (headlinesData.loadState.append) {
+                is LoadState.NotLoading -> Unit
+                LoadState.Loading -> {
+                    item {
+                        CircularProgressBar(modifier = Modifier
+                            .size(30.dp)
+                            .align(alignment = CenterHorizontally))
+                    }
+                }
+                is LoadState.Error -> {
+                    item {
+                        Text(text = "Failed to load Headlines"
+                            ,modifier = Modifier.align(alignment = CenterHorizontally))
                     }
                 }
             }
-            Status.ERROR ->{
-                Spacer(modifier = Modifier.fillMaxHeight(0.4f))
-                Text(text = "Failed to load Headlines"
-                    ,modifier = Modifier.align(alignment = CenterHorizontally))
-            }
-            Status.LOADING ->{
-                Spacer(modifier = Modifier.fillMaxHeight(0.4f))
-                CircularProgressBar(modifier = Modifier
-                    .size(30.dp)
-                    .align(alignment = CenterHorizontally))
-            }
-            else -> {}
         }
-
     }
 
 

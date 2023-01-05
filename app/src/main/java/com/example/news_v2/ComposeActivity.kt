@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.news_v2.ui.SearchPage
 import com.example.news_v2.ui.home.HomePage
 import com.example.news_v2.ui.theme.News20Theme
 import com.example.news_v2.ui.theme.Typography
@@ -70,6 +71,7 @@ fun LandingPage() {
                 NavigationBarItem(selected = selectedIndex == 0,
                     onClick = {
                         selectedIndex = 0
+                        navController.navigate("home")
                     },
                     icon = {
                         Image(painter = painterResource(id = R.drawable.home_selected)
@@ -85,6 +87,7 @@ fun LandingPage() {
                     selected = selectedIndex == 1,
                     onClick = {
                         selectedIndex = 1
+                        navController.navigate("search")
                     },
                     icon = {
                         Image(
@@ -118,9 +121,12 @@ fun LandingPage() {
         }
         ) {
 //
-        NavHost(navController = navController, startDestination = "home"){
+        NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(bottom = 80.dp)){
             composable("home"){
                 HomePage()
+            }
+            composable("search"){
+                SearchPage()
             }
         }
     }

@@ -26,7 +26,7 @@ object APIClient {
                 val originalHttpUrl: HttpUrl = original.url
                 val url = originalHttpUrl.newBuilder()
                     .addQueryParameter("apiKey", API_KEY)
-                    .addQueryParameter("country","in")
+//                    .addQueryParameter("country","in")
                     .build()
 
                 // Request customization: add request headers

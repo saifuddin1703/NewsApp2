@@ -17,7 +17,7 @@ class NewsRepository(
 
     suspend fun getTopHeadlines() = newsService.getTopHeadlines()
 
-    suspend fun searchNews(searchQuery : String) = newsService.searchNews(searchQuery = searchQuery)
+    suspend fun searchNews(searchQuery : String,pageNumber: Int,pageSize : Int) = newsService.searchNews(searchQuery = searchQuery, page = pageNumber,pageSize = pageSize)
 
-    suspend fun getTopHeadlinesOfCategory(category : String) = newsService.getHeadlinesOfCategory(category = category)
+    suspend fun getTopHeadlinesOfCategory(category : String,pageNumber: Int,pageSize : Int) = newsService.getHeadlinesOfCategory(category = category, page = pageNumber,pageSize = pageSize)
 }
