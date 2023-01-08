@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SearchPage(homeViewModel: HomeViewModel = viewModel()){
+fun SearchPage(homeViewModel: HomeViewModel){
 
     var searchQuery by remember{
         mutableStateOf("")
@@ -119,35 +119,6 @@ fun SearchPage(homeViewModel: HomeViewModel = viewModel()){
             })
         )
 
-//        when(searchResult?.status){
-//            Status.SUCCESS ->{
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .padding(top = 15.dp)
-//                ) {
-//                    searchResult?.data?.let { articles->
-//                        items(articles){article->
-//                            ArticleView(article = article)
-//                        }
-//                    }
-//                }
-//            }
-//            Status.ERROR ->{
-//                Spacer(modifier = Modifier.fillMaxHeight(0.4f))
-//                Text(text = "Failed to load Headlines"
-//                    ,modifier = Modifier.align(alignment = Alignment.CenterHorizontally))
-//            }
-//
-//            Status.LOADING ->{
-//                if(isSearchCliked){
-//                    Spacer(modifier = Modifier.fillMaxHeight(0.4f))
-//                    CircularProgressBar(modifier = Modifier
-//                        .size(30.dp)
-//                        .align(alignment = Alignment.CenterHorizontally))
-//                }
-//            }
-//            else -> {}
-//        }
 
         if (isSearchCliked){
             val articleData = homeViewModel.searchNews(searchQuery).collectAsLazyPagingItems()
@@ -188,5 +159,5 @@ fun SearchView(onSearchQueryChanged : (query : String) -> Unit){
 @Preview
 @Composable
 fun SearchPagePreview(){
-    SearchPage()
+    SearchPage(viewModel())
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,8 +28,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.example.news_v2.data.models.Article
+import com.example.news_v2.room.NewsDatabase
 import com.example.news_v2.ui.CircularProgressBar
 import com.example.news_v2.ui.theme.Pink80
 import com.example.news_v2.ui.theme.Typography
@@ -41,20 +44,23 @@ import com.example.news_v2.utils.categories
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomePage(homeViewModel: HomeViewModel = viewModel()){
+fun HomePage(homeViewModel: HomeViewModel){
 
     var selectedCategory by remember{
         mutableStateOf("Business")
     }
 
+    val context = LocalContext.current.applicationContext
+    Log.d(TAG,"line 53")
+//     val newsDatabase = NewsDatabase.getInstance(context)
+    Log.d(TAG,"line 55")
+//    homeViewModel.initializeRepo(newsDatabase)
+    Log.d(TAG,"line 57")
     val headlinesData = homeViewModel.fetchHeadlinesOfCategory(selectedCategory).collectAsLazyPagingItems()
-//
-//    Log.d(TAG,"$selectedCategory ${topHeadlinesResult?.status.toString()}")
-//    LaunchedEffect(key1 = selectedCategory){
-//        Log.d(TAG,"Launched effect")
-//        homeViewModel.fetchHeadlinesOfCategory(selectedCategory)
-//    }
 
+
+
+    Log.d(TAG,headlinesData.toString())
     Column(modifier = Modifier
         .background(color = Color.White))
     {
@@ -79,55 +85,34 @@ fun HomePage(homeViewModel: HomeViewModel = viewModel()){
             selectedCategory = it
         })
 
-
-//        when (topHeadlinesResult?.status){
-//            Status.SUCCESS ->{
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .padding(top = 15.dp)
-//                ) {
-//                    topHeadlinesResult?.data?.let { articles->
-//                        items(articles){article->
-//                            ArticleView(article = article)
-//                        }
-//                    }
-//                }
-//            }
-//            Status.ERROR ->{
-//                Spacer(modifier = Modifier.fillMaxHeight(0.4f))
-//                Text(text = "Failed to load Headlines"
-//                    ,modifier = Modifier.align(alignment = CenterHorizontally))
-//            }
-//            Status.LOADING ->{
-//                Spacer(modifier = Modifier.fillMaxHeight(0.4f))
-//                CircularProgressBar(modifier = Modifier
-//                    .size(30.dp)
-//                    .align(alignment = CenterHorizontally))
-//            }
-//            else -> {}
-//        }
+//        headlinesData.
+//        Log.d(TAG,headlinesData?.itemCount.toString())
         LazyColumn(){
-            items(headlinesData) { article ->
+            itemsIndexed(headlinesData!!) { index,article ->
+//                Log.d(TAG,"$index ${headlinesData.itemCount.toString()}")
                 article?.let {
                     ArticleView(article = it)
                 }
             }
-            when (headlinesData.loadState.append) {
-                is LoadState.NotLoading -> Unit
-                LoadState.Loading -> {
-                    item {
-                        CircularProgressBar(modifier = Modifier
-                            .size(30.dp)
-                            .align(alignment = CenterHorizontally))
-                    }
-                }
-                is LoadState.Error -> {
-                    item {
-                        Text(text = "Failed to load Headlines"
-                            ,modifier = Modifier.align(alignment = CenterHorizontally))
-                    }
-                }
-            }
+//            when (headlinesData.loadState.append) {
+//                is LoadState.NotLoading -> Unit
+//                LoadState.Loading -> {
+//                    item {
+//                        CircularProgressBar(modifier = Modifier
+//                            .size(30.dp)
+//                            .align(alignment = CenterHorizontally))
+//                    }
+//                }
+//                is LoadState.Error -> {
+//                    item {
+//                        Text(text = "Failed to load Headlines"
+//                            ,modifier = Modifier.align(alignment = CenterHorizontally))
+//                    }
+//                }
+//            }
+        }
+        SideEffect {
+            Log.d(TAG,headlinesData?.itemCount.toString())
         }
     }
 

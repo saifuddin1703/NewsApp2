@@ -17,16 +17,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.news_v2.ui.SearchPage
 import com.example.news_v2.ui.home.HomePage
+import com.example.news_v2.ui.home.HomeViewModel
 import com.example.news_v2.ui.theme.News20Theme
 import com.example.news_v2.ui.theme.Typography
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.text.Typography
 
+@AndroidEntryPoint
 class ComposeActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,10 +128,11 @@ fun LandingPage() {
 //
         NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(bottom = 80.dp)){
             composable("home"){
-                HomePage()
+
+                HomePage(homeViewModel = hiltViewModel<HomeViewModel>())
             }
             composable("search"){
-                SearchPage()
+                SearchPage(homeViewModel = hiltViewModel<HomeViewModel>())
             }
         }
     }

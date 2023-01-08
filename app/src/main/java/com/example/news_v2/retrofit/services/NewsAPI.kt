@@ -1,13 +1,10 @@
-package com.example.news_v2.services
+package com.example.news_v2.retrofit.services
 
 import com.example.news_v2.retrofit.response.NewsResponse
-import kotlinx.coroutines.Deferred
-import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface NewsService {
+interface NewsAPI {
 
     @GET("/v2/everything")
     suspend fun getEverything() : NewsResponse

@@ -1,26 +1,38 @@
-package com.example.news_v2.retrofit
+package com.example.news_v2.di
 
-import com.example.news_v2.services.NewsService
+import android.content.Context
+import com.example.news_v2.retrofit.services.NewsAPI
+import com.example.news_v2.room.NewsDatabase
 import com.example.news_v2.utils.API_KEY
 import com.example.news_v2.utils.BASE_URL
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
-import okhttp3.*
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.DateFormat
+import javax.inject.Singleton
 
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
 
-object APIClient {
-    private var interceptor = HttpLoggingInterceptor()
-    private var retrofit: Retrofit
-
-    init {
+    @Singleton
+    @Provides
+    fun provideNewsApi(): NewsAPI {
+        val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         val client = OkHttpClient.Builder()
             .addInterceptor(interceptor)
-                // interceptor for adding api to every request
+            // interceptor for adding api to every request
             .addInterceptor{chain->
                 val original: Request = chain.request()
                 val originalHttpUrl: HttpUrl = original.url
@@ -48,15 +60,17 @@ object APIClient {
             .create()
 
 
-        retrofit = Retrofit.Builder()
+        return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
+            .create(NewsAPI::class.java)
     }
 
-    fun getNewsService(): NewsService {
-        return retrofit.create(NewsService::class.java)
+    @Singleton
+    @Provides
+    fun provideRoom(@ApplicationContext context : Context): NewsDatabase {
+        return NewsDatabase.getInstance(context)
     }
-
 }

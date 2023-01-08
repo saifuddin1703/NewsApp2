@@ -1,14 +1,13 @@
-package com.example.news_v2.ui.paging
+package com.example.news_v2.data.paging
 
-import android.app.ApplicationErrorReport
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.news_v2.data.models.Article
 import com.example.news_v2.repositories.NewsRepository
 
-class HeadLinesPagingDataSource(
-    private val repository: NewsRepository,
-    private val category: String
+class SearchPagingDataSource(
+    private val searchQuery : String,
+    private val repository: NewsRepository
 ) : PagingSource<Int, Article>() {
     override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -20,7 +19,8 @@ class HeadLinesPagingDataSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
         return try {
             val nextPageNumber = params.key ?: 1
-            val response = repository.getTopHeadlinesOfCategory(category,nextPageNumber,10)
+            val response = repository.searchNews(searchQuery,nextPageNumber,10)
+
 
             LoadResult.Page(
                 data = response.articles,
