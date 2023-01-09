@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import androidx.paging.compose.itemsIndexed
@@ -50,17 +51,12 @@ fun HomePage(homeViewModel: HomeViewModel){
         mutableStateOf("Business")
     }
 
-    val context = LocalContext.current.applicationContext
-    Log.d(TAG,"line 53")
-//     val newsDatabase = NewsDatabase.getInstance(context)
-    Log.d(TAG,"line 55")
-//    homeViewModel.initializeRepo(newsDatabase)
-    Log.d(TAG,"line 57")
     val headlinesData = homeViewModel.fetchHeadlinesOfCategory(selectedCategory).collectAsLazyPagingItems()
 
+//    LaunchedEffect(key1 = headlinesData){
+//        Log.d(TAG,headlinesData.value.)
+//    }
 
-
-    Log.d(TAG,headlinesData.toString())
     Column(modifier = Modifier
         .background(color = Color.White))
     {
@@ -85,11 +81,8 @@ fun HomePage(homeViewModel: HomeViewModel){
             selectedCategory = it
         })
 
-//        headlinesData.
-//        Log.d(TAG,headlinesData?.itemCount.toString())
         LazyColumn(){
             itemsIndexed(headlinesData!!) { index,article ->
-//                Log.d(TAG,"$index ${headlinesData.itemCount.toString()}")
                 article?.let {
                     ArticleView(article = it)
                 }
@@ -111,9 +104,7 @@ fun HomePage(homeViewModel: HomeViewModel){
 //                }
 //            }
         }
-        SideEffect {
-            Log.d(TAG,headlinesData?.itemCount.toString())
-        }
+
     }
 
 

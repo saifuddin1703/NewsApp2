@@ -59,10 +59,8 @@ fun SearchPage(homeViewModel: HomeViewModel){
         .fillMaxSize()
         .background(color = Color.White)) {
 
-        val context = LocalContext.current
         // search view
 
-        val coroutineScope = rememberCoroutineScope()
         TextField(
             value = searchQuery,
             onValueChange = { value ->

@@ -10,9 +10,12 @@ import com.example.news_v2.data.models.Article
 import com.example.news_v2.data.models.RemoteKeys
 import com.example.news_v2.retrofit.services.NewsAPI
 import com.example.news_v2.room.NewsDatabase
+import com.example.news_v2.utils.NumberUtils
 import com.example.news_v2.utils.TAG
 import retrofit2.HttpException
 import java.io.IOException
+
+private const val NEWS_STARTING_PAGE_INDEX = 1
 
 @OptIn(ExperimentalPagingApi::class)
 class NewsRemoteMediator(
@@ -31,7 +34,7 @@ class NewsRemoteMediator(
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
 
-                remoteKeys?.nextKey?.minus(1) ?: 1
+                remoteKeys?.nextKey?.minus(1) ?: NEWS_STARTING_PAGE_INDEX
             }
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
@@ -55,7 +58,10 @@ class NewsRemoteMediator(
 
             val apiResponse = newsAPI.getHeadlinesOfCategory(category = category, page = page, pageSize = 10)
 
-            val articles = apiResponse.articles
+            val articles = apiResponse.articles.map {
+                it.id = NumberUtils.generateRandomId()
+                it
+            }
 
             Log.d(TAG,"article size = ${articles.size}")
             val endReached = articles.isEmpty()
@@ -69,15 +75,19 @@ class NewsRemoteMediator(
                     newsDao.clearAll()
                 }
 
-                val prevKey = if(page == 1) null else page - 1
+                val prevKey = if(page == NEWS_STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endReached) null else page + 1
 
-                val keys = articles.map {
-                    RemoteKeys(articleId = it.id, nextKey = nextKey, prevKey = prevKey)
+                val keys = articles.map{
+                    RemoteKeys(articleUrl = it.url, nextKey = nextKey, prevKey = prevKey)
                 }
 
                 remoteKeysDao.insertAll(remoteKey = keys)
+//                Log.d(TAG,articles.size.toString())
                 newsDao.insertAllArticles(articles)
+//                Log.d(TAG,newsDao.get().size.toString())
+//                Log.d(TAG,newsDao.get().size.toString())
+//                news
             }
 
             return MediatorResult.Success(endOfPaginationReached = endReached)
@@ -95,7 +105,7 @@ class NewsRemoteMediator(
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { article ->
                 // Get the remote keys of the last item retrieved
-                newsDatabase.getRemoteKeysDao().remoteKeysArticleId(article.id)
+                newsDatabase.getRemoteKeysDao().remoteKeysArticleUrl(article.url)
             }
     }
 
@@ -105,7 +115,7 @@ class NewsRemoteMediator(
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { article ->
                 // Get the remote keys of the first items retrieved
-                newsDatabase.getRemoteKeysDao().remoteKeysArticleId(article.id)
+                newsDatabase.getRemoteKeysDao().remoteKeysArticleUrl(article.url)
             }
     }
 
@@ -115,8 +125,8 @@ class NewsRemoteMediator(
         // The paging library is trying to load data after the anchor position
         // Get the item closest to the anchor position
         return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.id?.let { articleId ->
-                newsDatabase.getRemoteKeysDao().remoteKeysArticleId(articleId)
+            state.closestItemToPosition(position)?.url?.let { articleUrl ->
+                newsDatabase.getRemoteKeysDao().remoteKeysArticleUrl(articleUrl = articleUrl)
             }
         }
     }

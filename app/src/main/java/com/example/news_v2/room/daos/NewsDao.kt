@@ -18,4 +18,7 @@ interface NewsDao {
 
     @Query("Select * from article")
     fun getAllNews() : PagingSource<Int,Article>
+
+    @Query("Select * from article")
+    fun get() : List<Article>
 }
