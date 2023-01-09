@@ -1,5 +1,6 @@
 package com.example.news_v2
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,26 +11,26 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.news_v2.data.models.Article
+//import com.example.news_v2.data.models.ArticleArgType
 import com.example.news_v2.ui.SearchPage
+import com.example.news_v2.ui.article.ArticleDetailPage
 import com.example.news_v2.ui.home.HomePage
-import com.example.news_v2.ui.home.HomeViewModel
 import com.example.news_v2.ui.theme.News20Theme
-import com.example.news_v2.ui.theme.Typography
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.text.Typography
 
 @AndroidEntryPoint
 class ComposeActivity : ComponentActivity() {
@@ -51,17 +52,33 @@ class ComposeActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LandingPage()
+                    val landingPageNavController = rememberNavController()
+                    NavHost(navController = landingPageNavController, startDestination = "landing",modifier = Modifier.fillMaxSize()){
+                        composable("landing"){
+                            LandingPage(parentNavController = landingPageNavController)
+                        }
+//                        composable("articleDetailPage/article",
+//                        arguments = listOf(navArgument("article"){
+//                            type = ArticleArgType()
+//                        })
+//                        ){ it ->
+//                            val article = it.arguments?.getString("article")
+//                            article?.let{ article1->
+//                                ArticleDetailPage(article = Gson().fromJson(article1,Article::class.java))
+//                            }
+//                        }
+                    }
                 }
             }
         }
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LandingPage() {
+fun LandingPage(parentNavController: NavHostController) {
     val navController = rememberNavController()
     Scaffold(modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -128,11 +145,10 @@ fun LandingPage() {
 //
         NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(bottom = 80.dp)){
             composable("home"){
-
-                HomePage(homeViewModel = hiltViewModel<HomeViewModel>())
+                HomePage(homeViewModel = hiltViewModel(),parentNavController)
             }
             composable("search"){
-                SearchPage(homeViewModel = hiltViewModel<HomeViewModel>())
+                SearchPage(homeViewModel = hiltViewModel(),parentNavController)
             }
         }
     }
@@ -144,6 +160,6 @@ fun LandingPage() {
 fun DefaultPreview() {
     News20Theme {
 //        Greeting("Android")
-        LandingPage()
+//        LandingPage(landingPageNavController)
     }
 }
