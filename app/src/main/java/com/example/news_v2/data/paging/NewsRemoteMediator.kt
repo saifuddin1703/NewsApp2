@@ -15,7 +15,6 @@ import com.example.news_v2.utils.TAG
 import retrofit2.HttpException
 import java.io.IOException
 
-private const val NEWS_STARTING_PAGE_INDEX = 1
 
 @OptIn(ExperimentalPagingApi::class)
 class NewsRemoteMediator(
@@ -24,6 +23,7 @@ class NewsRemoteMediator(
     private val newsDatabase: NewsDatabase
 ) : RemoteMediator<Int,Article>(){
 
+    private val NEWS_STARTING_PAGE_INDEX = 1
 
     override suspend fun load(
         loadType: LoadType,

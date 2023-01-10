@@ -8,36 +8,29 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.example.news_v2.data.models.Article
-import com.example.news_v2.room.NewsDatabase
 import com.example.news_v2.ui.CircularProgressBar
 import com.example.news_v2.ui.theme.Pink80
 import com.example.news_v2.ui.theme.Typography
 import com.example.news_v2.utils.DateUtils
-import com.example.news_v2.utils.Status
 import com.example.news_v2.utils.TAG
 import com.example.news_v2.utils.categories
 
@@ -45,17 +38,14 @@ import com.example.news_v2.utils.categories
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomePage(homeViewModel: HomeViewModel){
+fun HomePage(homeViewModel: HomeViewModel, parentNavController: NavHostController){
 
     var selectedCategory by remember{
         mutableStateOf("Business")
     }
 
     val headlinesData = homeViewModel.fetchHeadlinesOfCategory(selectedCategory).collectAsLazyPagingItems()
-
-//    LaunchedEffect(key1 = headlinesData){
-//        Log.d(TAG,headlinesData.value.)
-//    }
+//    Log.d(TAG,"test")
 
     Column(modifier = Modifier
         .background(color = Color.White))
@@ -82,27 +72,31 @@ fun HomePage(homeViewModel: HomeViewModel){
         })
 
         LazyColumn(){
-            itemsIndexed(headlinesData!!) { index,article ->
+            itemsIndexed(headlinesData) { index,article ->
                 article?.let {
-                    ArticleView(article = it)
+                    ArticleView(article = it, onClick = {
+                        try{ parentNavController.navigate("articleDetailPage/${article}") }catch (e : Exception){
+                            Log.d(TAG,e.message.toString())
+                        }
+                    })
                 }
             }
-//            when (headlinesData.loadState.append) {
-//                is LoadState.NotLoading -> Unit
-//                LoadState.Loading -> {
-//                    item {
-//                        CircularProgressBar(modifier = Modifier
-//                            .size(30.dp)
-//                            .align(alignment = CenterHorizontally))
-//                    }
-//                }
-//                is LoadState.Error -> {
-//                    item {
-//                        Text(text = "Failed to load Headlines"
-//                            ,modifier = Modifier.align(alignment = CenterHorizontally))
-//                    }
-//                }
-//            }
+            when (headlinesData.loadState.append) {
+                is LoadState.NotLoading -> Unit
+                LoadState.Loading -> {
+                    item {
+                        CircularProgressBar(modifier = Modifier
+                            .size(30.dp)
+                            .align(alignment = CenterHorizontally))
+                    }
+                }
+                is LoadState.Error -> {
+                    item {
+                        Text(text = "Failed to load Headlines"
+                            ,modifier = Modifier.align(alignment = CenterHorizontally))
+                    }
+                }
+            }
         }
 
     }
@@ -112,8 +106,7 @@ fun HomePage(homeViewModel: HomeViewModel){
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ArticleView(article: Article){
-
+fun ArticleView(article: Article,onClick : () -> Unit){
 
     Row(modifier = Modifier
         .padding(start = 10.dp, end = 10.dp, top = 8.dp, bottom = 8.dp)
@@ -121,6 +114,9 @@ fun ArticleView(article: Article){
         .fillMaxWidth()
         .height(100.dp)
         .background(color = Color.White)
+        .clickable {
+            onClick()
+        }
 
     )
     {
@@ -228,7 +224,9 @@ fun CategoriesPreview(){
 @Composable
 @Preview
 fun ArticlePreview(){
-    ArticleView(article = Article())
+    ArticleView(article = Article(), onClick = {
+
+    })
 }
 
 @Composable

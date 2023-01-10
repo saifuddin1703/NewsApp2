@@ -33,7 +33,6 @@ class HomeViewModel @Inject() constructor() : ViewModel() {
     fun fetchHeadlinesOfCategory(category : String): Flow<PagingData<Article>> {
         val pagingSourceFactory = {
             newsDataBase.getNewsDao().getAllNews()
-//            Log.d(TAG,news.)
         }
         return Pager(
             config = PagingConfig(
