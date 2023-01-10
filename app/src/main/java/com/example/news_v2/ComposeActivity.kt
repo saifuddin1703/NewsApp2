@@ -3,6 +3,7 @@ package com.example.news_v2
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -23,11 +24,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.news_v2.data.models.Article
+import com.example.news_v2.data.models.ArticleArgType
 //import com.example.news_v2.data.models.ArticleArgType
 import com.example.news_v2.ui.SearchPage
 import com.example.news_v2.ui.article.ArticleDetailPage
 import com.example.news_v2.ui.home.HomePage
 import com.example.news_v2.ui.theme.News20Theme
+import com.example.news_v2.utils.TAG
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,33 +43,35 @@ class ComposeActivity : ComponentActivity() {
         setContent {
             News20Theme {
                 val systemUiController = rememberSystemUiController()
-                SideEffect {
-                    systemUiController.setStatusBarColor(
-                        color = Color.White,
-                        darkIcons = true
-                    )
-                }
+
 
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    SideEffect {
+                        systemUiController.setStatusBarColor(
+                            color = Color.White,
+                            darkIcons = true
+                        )
+                    }
                     val landingPageNavController = rememberNavController()
                     NavHost(navController = landingPageNavController, startDestination = "landing",modifier = Modifier.fillMaxSize()){
                         composable("landing"){
                             LandingPage(parentNavController = landingPageNavController)
                         }
-//                        composable("articleDetailPage/article",
-//                        arguments = listOf(navArgument("article"){
-//                            type = ArticleArgType()
-//                        })
-//                        ){ it ->
-//                            val article = it.arguments?.getString("article")
-//                            article?.let{ article1->
-//                                ArticleDetailPage(article = Gson().fromJson(article1,Article::class.java))
-//                            }
-//                        }
+                        composable("articleDetailPage/{article}",
+                        arguments = listOf(navArgument("article"){
+                            type = ArticleArgType()
+                        })
+                        ){
+                            val article = it.arguments?.getString("article")
+                            article?.let{ articleString->
+                                Log.d(TAG,articleString.toString())
+                                ArticleDetailPage(article = ArticleArgType().fromJsonParse(articleString))
+                            }
+                        }
                     }
                 }
             }

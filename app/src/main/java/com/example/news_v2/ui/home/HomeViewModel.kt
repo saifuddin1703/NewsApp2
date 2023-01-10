@@ -32,13 +32,7 @@ class HomeViewModel @Inject() constructor() : ViewModel() {
     @OptIn(ExperimentalPagingApi::class)
     fun fetchHeadlinesOfCategory(category : String): Flow<PagingData<Article>> {
         val pagingSourceFactory = {
-            try {
-                newsDataBase.getNewsDao()
-                newsDataBase.getNewsDao().getAllNews()
-            }catch (e:Exception){
-                Log.d(TAG,e.message.toString())
-                newsDataBase.getNewsDao().getAllNews()
-            }
+            newsDataBase.getNewsDao().getAllNews()
         }
         return Pager(
             config = PagingConfig(

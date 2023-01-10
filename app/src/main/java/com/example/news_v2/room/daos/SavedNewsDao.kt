@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SavedNewsDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertSavedNews(savedArticle: SavedArticle)
-
-    @Query("Delete from saved_article where id = :saveArticleId")
-    fun deleteSavedNews(saveArticleId : Long)
-
-    @Query("Select * from saved_article")
-    fun getAllSavedNews() : Flow<List<SavedArticle>>
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    fun insertSavedNews(savedArticle: SavedArticle)
+//
+//    @Query("Delete from saved_article where id = :saveArticleId")
+//    fun deleteSavedNews(saveArticleId : Long)
+//
+//    @Query("Select * from saved_article")
+//    fun getAllSavedNews() : Flow<List<SavedArticle>>
 
 }

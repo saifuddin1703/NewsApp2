@@ -75,26 +75,28 @@ fun HomePage(homeViewModel: HomeViewModel, parentNavController: NavHostControlle
             itemsIndexed(headlinesData) { index,article ->
                 article?.let {
                     ArticleView(article = it, onClick = {
-                        parentNavController.navigate("articleDetailPage/${article}")
+                        try{ parentNavController.navigate("articleDetailPage/${article}") }catch (e : Exception){
+                            Log.d(TAG,e.message.toString())
+                        }
                     })
                 }
             }
-//            when (headlinesData.loadState.append) {
-//                is LoadState.NotLoading -> Unit
-//                LoadState.Loading -> {
-//                    item {
-//                        CircularProgressBar(modifier = Modifier
-//                            .size(30.dp)
-//                            .align(alignment = CenterHorizontally))
-//                    }
-//                }
-//                is LoadState.Error -> {
-//                    item {
-//                        Text(text = "Failed to load Headlines"
-//                            ,modifier = Modifier.align(alignment = CenterHorizontally))
-//                    }
-//                }
-//            }
+            when (headlinesData.loadState.append) {
+                is LoadState.NotLoading -> Unit
+                LoadState.Loading -> {
+                    item {
+                        CircularProgressBar(modifier = Modifier
+                            .size(30.dp)
+                            .align(alignment = CenterHorizontally))
+                    }
+                }
+                is LoadState.Error -> {
+                    item {
+                        Text(text = "Failed to load Headlines"
+                            ,modifier = Modifier.align(alignment = CenterHorizontally))
+                    }
+                }
+            }
         }
 
     }
